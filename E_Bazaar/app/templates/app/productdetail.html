@@ -1,0 +1,198 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Product Detail{% endblock title %}
+{% block main-content %}
+<div class="container my-5">
+ <div class="row">
+  <div class="col-sm-6 text-center align-self-center">
+   <img src="{{product.product_image.url}}" alt="" class="img-fluid img-thumbnail" width="500px">
+  </div>
+  <div class="col-sm-5 offset-sm-1 custom-product-description">
+   <h2 class="border-bottom pb-2">Product Title: Product 1</h2>
+   {% comment %} <hr> {% endcomment %}
+   <p>{{product.description}}</p> <br>
+   <h4>Rs. {{product.discounted_price}} <small class="fw-light text-decoration-line-through">{{product.selling_price}}</small></h4> <br>
+
+   {% if request.user.is_authenticated %}
+   {% if item_already_in_cart %}
+    <a href="{% url "showcart" %}" class="btn btn-warning shadow px-5 py-2 ms-4">Go to Cart</a>
+   {% else %} 
+    <form action="/add-to-cart" class="d-inline">
+        <input type="hidden" name="prod_id" value={{product.id}} id="prod_id">
+        <button type="submit" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
+    </form>
+
+    <form action="/buy-now" class="d-inline">
+        <input type="hidden" name="item_id" value={{product.id}} id="item_id">
+        <button type="submit" class="btn btn-danger shadow px-5 py-2 ms-4">Buy Now</button>
+   </form>
+
+   {% endif %}
+   {% endif %}
+
+   {% if not request.user.is_authenticated %}
+    <form action="/add-to-cart" class="d-inline">
+        <input type="hidden" name="prod_id" value={{product.id}} id="prod_id">
+        <button type="submit" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
+    </form>
+   {% endif %}
+
+
+
+   {% comment %} <form action="/buy-now" class="d-inline">
+        <input type="hidden" name="item_id" value={{product.id}} id="item_id">
+        <button type="submit" class="btn btn-danger shadow px-5 py-2 ms-4">Buy Now</button>
+   </form> {% endcomment %}
+
+   {% comment %} <a href="{% url 'checkout' %}" class="btn btn-danger shadow px-5 py-2 ms-4">Buy Now</a> {% endcomment %}
+   <h5 class="mt-5">Available Offers</h5>
+   <ul>
+    <li>Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>
+    <li>Special Price Get extra ₹3000 off (price inclusive of discount)</li>
+    <li>No cost EMI ₹1,667/month. Standard EMI also available</li>
+    <li>Partner Offer ₹2000 Flipkart Gift Card on Every 1000th Transaction with a new Visa Debit/Credit Card</li>
+   </ul>
+  </div>
+ </div>
+</div>
+
+
+{% if category == 'BW' %}
+<!-- 1st Product Slider -->
+<div class="m-3">
+    <div class="my-5">
+      <h2 class="heading text-center"><span>Similar Bottom Wears Product</span></h2>
+    </div>
+   
+   <!-- Slider 1 -->
+    <div class="owl-carousel" id="slider1">
+      {% for bw in allproduct %}
+  
+        <a href="{% url 'product-detail' bw.id %}" class="btn">
+          <div class="card" style="width: 12rem;">
+            <div class="m-2 border-2">
+              <img src="{{bw.product_image.url}}" class="card-img-top" alt="...">
+            </div>
+            <div class="card-body card-footer border-2">
+              <h5 class="card-title fw-bold">{{bw.title}}</h5>
+              {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+              <div class="fw-bold">Rs. {{bw.discounted_price}}
+                <small class="fw-light text-decoration-line-through text-muted">{{bw.selling_price}}</small>
+              </div>
+              {% comment %} <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+            </div>
+          </div>
+        </a>
+  
+      {% endfor %}
+    </div>
+  </div>
+  <!-- End 1st Product Slider -->
+
+  
+  {% elif category == 'TW' %}
+  <!-- 2nd Product Slider -->
+  <div class="m-3">
+    <div class="my-5">
+      <h2 class="heading text-center"><span>Similar Top Wears Product</span></h2>
+    </div>
+  
+   
+   <!-- Slider 1 -->
+    <div class="owl-carousel" id="slider2">
+      {% for tw in allproduct %}
+  
+        <a href="{% url 'product-detail' tw.id %}" class="btn">
+          <div class="card" style="width: 12rem;">
+            <div class="m-2 border-2">
+              <img src="{{tw.product_image.url}}" class="card-img-top" alt="...">
+            </div>
+            <div class="card-body card-footer border-2">
+              <h5 class="card-title fw-bold">{{tw.title}}</h5>
+              {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+              <div class="fw-bold">Rs. {{tw.discounted_price}}
+                <small class="fw-light text-decoration-line-through text-muted">{{tw.selling_price}}</small>
+              </div>
+              {% comment %} <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+            </div>
+          </div>
+        </a>
+  
+      {% endfor %}
+    </div>
+  </div>
+  <!-- End 2nd Product Slider -->
+  
+
+  
+  {% elif category == 'M' %}
+  <!-- 3rd Product Slider -->
+  <div class="m-3">
+    <div class="my-5">
+      <h2 class="heading text-center "><span>Similar Smart Mobiles Product</span></h2>
+    </div>
+  
+   
+   <!-- Slider 1 -->
+    <div class="owl-carousel" id="slider3">
+      {% for m in allproduct %}
+  
+        <a href="{% url 'product-detail' m.id %}" class="btn">
+          <div class="card" style="width: 12rem;">
+            <div class="m-2 border-2">
+              <img src="{{m.product_image.url}}" class="card-img-top" alt="...">
+            </div>
+            <div class="card-body card-footer border-2">
+              <h5 class="card-title fw-bold">{{m.title}}</h5>
+              {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+              <div class="fw-bold">Rs. {{m.discounted_price}}
+                <small class="fw-light text-decoration-line-through text-muted">{{m.selling_price}}</small>
+              </div>
+              {% comment %} <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+            </div>
+          </div>
+        </a>
+  
+      {% endfor %}
+    </div>
+  </div>
+  <!-- End 3rd Product Slider -->
+
+
+  {% elif category == 'L' %}
+  <!-- 3rd Product Slider -->
+  <div class="m-3">
+    <div class="my-5">
+      <h2 class="heading text-center "><span>Similar Laptops Product</span></h2>
+    </div>
+  
+   
+   <!-- Slider 1 -->
+    <div class="owl-carousel" id="slider4">
+      {% for l in allproduct %}
+  
+        <a href="{% url 'product-detail' l.id %}" class="btn">
+          <div class="card" style="width: 12rem;">
+            <div class="m-2 border-2">
+              <img src="{{l.product_image.url}}" class="card-img-top" alt="...">
+            </div>
+            <div class="card-body card-footer border-2">
+              <h5 class="card-title fw-bold">{{l.title}}</h5>
+              {% comment %} <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> {% endcomment %}
+              <div class="fw-bold">Rs. {{l.discounted_price}}
+                <small class="fw-light text-decoration-line-through text-muted">{{l.selling_price}}</small>
+              </div>
+              {% comment %} <a href="#" class="btn btn-primary">Go somewhere</a> {% endcomment %}
+            </div>
+          </div>
+        </a>
+  
+      {% endfor %}
+    </div>
+  </div>
+  <!-- End 4th Product Slider -->
+
+  {% endif %}
+
+
+{% endblock main-content %}

@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap');
+
+.owl-carousel .item{
+ /* border: 1px solid black; */
+ font-size: 24px;
+ text-align: center;
+ margin-top: 20px;;
+}
+
+.owl-next{
+ float:right;
+}
+.owl-prev{
+ float:left;
+}
+.owl-prev span{
+ font-size: 24px;
+ font-weight: bold;
+}
+.owl-next span{
+ font-size: 24px;
+ font-weight: bold;
+}
+  
+
+
+/* declare variable*/
+
+:root
+{
+	--green: green;
+	--red: #ea1538;
+	--yellow: #F8D706;
+	--blue: #047BD5;
+	--black: #130f40;
+	--light-color: #666;
+	--box-shadow: 0 1px 2px rgba(0,0,0,.1);
+	--border: 3px solid rgba(0,0,0.1);
+	--outline: 2px solid rgba(0,0,0.1);
+} 
+
+/* declare variable*/
+
+
+
+*
+{
+	font-family: 'Poppins', sans-serif;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	outline: none;
+	border: none;
+	text-decoration: none;
+	/* text-transform: capitalize; */
+}
+
+
+
+/* this the color of navbar */
+.custom-nav
+{
+	background-color: var(--blue);
+}
+
+
+.logo
+{
+	font-size: 20px;
+	font-weight: bolder;
+	color: #fff;
+}
+
+.logo i
+{
+	color: var(--yellow);
+}
+
+
+
+/* slider-title */
+.custom-caption-left {
+	left: 150px; /* Position the caption 150px from the left */
+	bottom: 200px; /* Adjust vertical position if needed */
+	text-align: left; /* Ensure text aligns to the left */
+}
+
+.custom-caption-right {
+	right: 150px; /* Position the caption 150px from the right */
+	bottom: 200px; /* Adjust vertical position if needed */
+	text-align: right; /* Ensure text aligns to the right */
+}
+
+.custom-caption-left, .custom-caption-right  p{
+	font-size: 20px;
+}
+
+
+/* heading */
+.heading span
+{
+	background: var(--blue);
+	color: #fff;
+	display: inline-block;
+	padding: 6px 50px;
+	clip-path: polygon(100% 0%, 93% 50%, 100% 99%, 0% 100%, 7% 50%, 0%0%);
+}
+
+
+/* i have to override the bootstrap color */
+.btn-warning
+{
+	background: var(--yellow);
+}
+
+
+
+
+
+/*footer section*/
+.footer
+{
+	background-color: #fff;
+}
+
+.footer .box-container
+{
+	border: 0px solid;
+	display: grid;
+	grid-template-columns: repeat(auto-fit,minmax(200px, 1fr));
+	grid-gap: 24px;
+}
+
+.footer .box-container .box h3
+{
+	font-size: 25px;
+	color: var(--black);
+	padding: 16px 0;
+}
+
+.footer .box-container .box h3 i
+{
+	color: var(--yellow);
+}
+
+.footer .box-container .box .links
+{
+	display: block;
+	font-size: 15px;
+    text-decoration: none;
+	color: var(--light-color);
+	padding: 10px 0;
+}
+
+.footer .box-container .box .links i
+{
+	color: var(--blue);
+	padding-right: .5rem;
+}
+
+.footer .box-container .box .links:hover i
+{
+	padding-right: 2rem;
+}
+
+
+.footer .box-container .box p
+{
+	line-height: 1.8;
+	font-size: 15px;
+	color: var(--light-color);
+	padding: 10px 0;
+}
+
+.footer .box-container .box .share a
+{
+	border: 0px solid;
+	/* display: inline-block; */
+	border-radius: .5rem;
+	width: 40px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 20px;
+	color: var(--black);
+	margin-left: .2rem;
+	background-color: #eee;
+	text-align: center;
+    text-decoration: none;
+}
+
+.footer .box-container .box .share a:hover
+{
+	background-color: var(--blue);
+	color: #fff;
+}
+
+.map{
+	width: 100%;
+	height: 15rem;
+}
+
+.footer .credit span
+{
+	color: var(--blue);
+    font-weight: 500;
+}
+
+/*footer section*/
+
+
+
+/*media queires*/
+@media (max-width: 450px)
+{
+	html
+	{
+		font-size: 50%;
+	}
+
+	.custom-product-description{
+		margin-top: 30px;
+	}
+
+	.custom-filter-card{
+		text-align: center;
+	}
+
+	.footer
+	{
+		text-align: center;
+		/* font-size: 20px; */
+	}
+}
+
