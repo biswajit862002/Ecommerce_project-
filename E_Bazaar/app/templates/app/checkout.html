@@ -19,7 +19,8 @@
       <p class="fw-bold">Total Cost = {{totalamount}}</p>
     <small>Term and Condition: Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia, ullam saepe! Iure optio repellat dolor velit, minus rem. Facilis cumque neque numquam laboriosam, accusantium adipisci nisi nihil in et quis?</small>
   </div>
-  <div class="col-sm-4 offset-sm-1">
+
+  {% comment %} <div class="col-sm-4 offset-sm-1">
     <h4>Select Shipping Address</h4>
     <hr>
     <form action="/paymentdone">
@@ -36,11 +37,121 @@
           </div>
         </div>
       {% endfor %}
+
+      {% if add %}
         <div class="text-end">
           <button type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Continue</button>
         </div>
+      {% else  %}
+        <div class="alert alert-danger text-center fs-6" role="alert">
+          Please add Your Address, Go to Your Profile and Set your Address
+        </div>
+        <div class="container my-5 text-center">
+          <a href="{% url "profile" %}" class="btn btn-primary">Go To Profile</a>
+        </div>
+    {% endif %}
+
       </form>
+action="/paymentdone"
     </div>
+  </div> {% endcomment %}
+
+
+
+  <div class="col-sm-4 offset-sm-1">
+    <h4>Select Shipping Address</h4>
+    <hr>
+
+<form method="post" id="myform" action="/paymentdone">
+        {% for ad in add %}
+            <div class="form-check">
+                <input class="form-check-input address-radio" type="radio" name="custid" id="custadd{{forloop.counter}}" value="{{ad.id}}">
+                <label class="form-check-label fw-bold" for="custadd{{forloop.counter}}">
+                    Address: {{forloop.counter}}
+                </label>
+            </div>
+            <div class="card mt-2 mb-5">
+                <div class="card-body">
+                    <h5>{{ad.name}}</h5>
+                    <p>{{ad.locality}}, {{ad.city}}, {{ad.mobile}}, {{ad.state}} - {{ad.zipcode}}</p>
+                </div>
+            </div>
+        {% endfor %}
+
+        {% if add %}
+            
+            <div class="form-check mb-3">
+              <label for="totamount" class="form-label">Total Amount</label>
+              <input type="number" name="totamount" id="" class="form-control" value={{totalamount}} readonly>
+            </div>
+
+            <div class="text-end" id="continue-btn-container" style="display: none;">
+                {% comment %} <button type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Continue</button> {% endcomment %}
+
+                <button id="rzp-button1" type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Payment</button>
+
+            </div>
+        {% else %}
+            <div class="alert alert-danger text-center fs-6" role="alert">
+                Please add Your Address, Go to Your Profile and Set your Address
+            </div>
+            <div class="container my-5 text-center">
+                <a href="{% url "profile" %}" class="btn btn-primary">Go To Profile</a>
+            </div>
+        {% endif %}
+    </form>
   </div>
+
+
+
+
+
 </div>
 {% endblock main-content %}
+
+
+{% block payment-gateway %}
+
+<script>
+  var options = {
+    "key": "rzp_test_8YjCGPS5hMGC0K", // Enter the Key ID generated from the Dashboard
+    "amount": "{{razoramount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "E-Bazaar",
+    "description": "Purchase Product",
+    "order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+      console.log("Success");
+      var form = document.getElementById("myform")
+        // alert(response.razorpay_payment_id);
+        // alert(response.razorpay_order_id);
+        // alert(response.razorpay_signature)
+        window.location.href = `http://localhost:8000/paymentdone?order_id=${response.razorpay_order_id}&payment_id=${response.razorpay_payment_id}&cust_id=${form.elements["custid"].value}`
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+          alert(response.error.description);
+       // alert(response.error.code);
+       // alert(response.error.source);
+       // alert(response.error.step);
+       // alert(response.error.reason);
+       // alert(response.error.metadata.order_id);
+       // alert(response.error.metadata.payment_id);
+});
+document.getElementById('rzp-button1').onclick = function(e){
+    console.log("Button Click");
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+
+{% endblock payment-gateway %}
+
+
+{% block footer %}
+{% include "app/footer.html" %}
+{% endblock footer %}

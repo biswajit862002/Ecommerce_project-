@@ -162,9 +162,8 @@
 
 <!-- 1st Product Slider -->
 <div class="m-3">
-  <div class="my-5">
-    <h2 class="heading text-center"><span>E-Bazaar Bottom Wears</span></h2>
-  </div>
+
+  {% include "app/heading.html" with data="E-Bazaar Bottom Wears" %}
  
  <!-- Slider 1 -->
   <div class="owl-carousel" id="slider1">
@@ -214,26 +213,14 @@
 <!-- End 1st Product Slider --> {% endcomment %}
 
 
-
-<!-- Live Sale Section -->
-<div class="container">
-  <div class="row bg-secondary text-center p-5 text-white border-bottom shadow rounded">
-    <h1>SALE IS LIVE NOW</h1>
-    <span>5% Instant Discount on Axis Bank Credit and Debit Card</span>
-    <small class="fw-lighter">Term and Condition Applied (For details visit Bank's official Website)</small>
-  </div>
-</div> 
-<!-- End Live Sale Section -->
-
+{% include "app/sale.html" with bank_discount="5% Instant Discount on Axis Bank Credit and Debit Card" product_discount="10% Instant Discount on all Top Wears Product" %}
 
 
 <!-- 2nd Product Slider -->
 <div class="m-3">
-  <div class="my-5">
-    <h2 class="heading text-center"><span>E-Bazaar Top Wears</span></h2>
-  </div>
 
- 
+  {% include "app/heading.html" with data="E-Bazaar Top Wears" %}
+
  <!-- Slider 1 -->
   <div class="owl-carousel" id="slider2">
     {% for t in topwears %}
@@ -298,10 +285,8 @@
 
 <!-- 3rd Product Slider -->
 <div class="m-3">
-  <div class="my-5">
-    <h2 class="heading text-center "><span>E-Bazaar Smart Mobiles</span></h2>
-  </div>
-
+  
+  {% include "app/heading.html" with data="E-Bazaar Smart Mobiles" %}
  
  <!-- Slider 1 -->
   <div class="owl-carousel" id="slider3">
@@ -331,10 +316,8 @@
 
 <!-- 4th Product Slider -->
 <div class="m-3">
-  <div class="my-5">
-    <h2 class="heading text-center "><span>E-Bazaar Laptops</span></h2>
-  </div>
-
+  
+  {% include "app/heading.html" with data="E-Bazaar Laptops" %}
  
  <!-- Slider 1 -->
   <div class="owl-carousel" id="slider4">
@@ -362,4 +345,11 @@
 <!-- End 4th Product Slider -->
 
 {% endblock main-content %}
+
+
+{% block footer %}
+{% include "app/footer.html" %}
+{% endblock footer %}
+
+
 

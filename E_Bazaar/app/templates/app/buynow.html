@@ -36,11 +36,32 @@
             Address: {{forloop.counter}} </label>
         </div>
         {% endfor %}
-        <div class="text-end">
-          <button type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Continue</button>
-        </div>
+
+        {% if add %}
+          <div class="text-end">
+            <button type="submit" class="btn btn-warning mt-3 px-5 fw-bold">Continue</button>
+          </div>
+        {% else  %}
+          <div class="alert alert-danger text-center fs-6" role="alert">
+            Please add Your Address, Go to Your Profile and Set your Address
+          </div>
+          <div class="container my-5 text-center">
+            <a href="{% url "profile" %}" class="btn btn-primary">Go To Profile</a>
+          </div>
+        {% endif %}
+
       </form>
+
+      
+
     </div>
   </div>
 </div>
 {% endblock main-content %}
+
+
+{% block footer %}
+{% include "app/footer.html" %}
+{% endblock footer %}
+
+

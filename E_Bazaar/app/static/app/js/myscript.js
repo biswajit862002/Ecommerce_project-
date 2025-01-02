@@ -9,7 +9,7 @@ $('#slider1, #slider2, #slider3, #slider4').owlCarousel({
             autoplay: true,
         },
         600: {
-            items: 4,
+            items: 3,
             nav: true,
             autoplay: true,
         },
@@ -95,27 +95,84 @@ $('.remove-cart').click(function () {
 
 
 
+// this code is work only 1 order cancle 
+// $('.btn-primary').click(function () {
+//     let orderId = $(this).attr("data-order-id").toString(); // Pass the order ID dynamically
+//     console.log(orderId);
+//     $.ajax({
+//         type: 'POST',
+//         url: '/cancel_order/',
+//         data: {
+//             order_id: orderId,
+//             csrfmiddlewaretoken: '{{ csrf_token }}' // Include CSRF token
+//         },
+//         success: function (response) {
+//             alert('Order cancelled successfully!');
+//             location.reload();
+//         },
+//         error: function (error) {
+//             alert('Something went wrong!');
+//             console.error(error.responseText);
+//         }
+//     });
+// });
 
-$('.btn-primary').click(function () {
-    let orderId = $(this).attr("data-order-id").toString(); // Pass the order ID dynamically
-    console.log(orderId);
-    $.ajax({
-        type: 'POST',
-        url: '/cancel_order/',
-        data: {
-            order_id: orderId,
-            csrfmiddlewaretoken: '{{ csrf_token }}' // Include CSRF token
-        },
-        success: function (response) {
-            alert('Order cancelled successfully!');
-            location.reload();
-        },
-        error: function (error) {
-            alert('Something went wrong!');
-            console.error(error.responseText);
-        }
+
+
+
+// this code work for multiple order cancle but it conflicts when same user can can cancle the same product item 
+
+$(document).ready(function () {
+    // Set the correct order ID when the cancel button is clicked
+    $('.order-cancel-btn').click(function () {
+        let orderId = $(this).data('order-id'); // Get the product ID
+        console.log("Order ID to cancel: ", orderId);
+        $('#exampleModal .confirm-cancel-btn').data('order-id', orderId); // Set it for the confirm button
+    });
+
+    // Handle the Confirm button click
+    $('.confirm-cancel-btn').click(function () {
+        let orderId = $(this).data('order-id'); // Get the product ID from the confirm button
+        console.log("Order ID to cancel: ", orderId);
+
+        $.ajax({
+            type: 'POST',
+            url: '/cancel_order/',
+            data: {
+                order_id: orderId,
+                csrfmiddlewaretoken: '{{ csrf_token }}' // Include CSRF token
+            },
+            success: function (response) {
+                alert('Order cancelled successfully!');
+                location.reload(); // Reload the page to reflect changes
+            },
+            error: function (error) {
+                alert('Something went wrong!');
+                console.error(error.responseText);
+            }
+        });
+
+        // Hide the modal after confirming
+        $('#exampleModal').modal('hide');
     });
 });
+
+
+
+
+// Select all radio buttons and the container for the "Continue" button
+const addressRadios = document.querySelectorAll('.address-radio');
+const continueButtonContainer = document.getElementById('continue-btn-container');
+
+// Add event listeners to each radio button
+addressRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+        // Display the "Continue" button container when a radio button is selected
+        continueButtonContainer.style.display = 'block';
+    });
+});
+
+
 
 
 

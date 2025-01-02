@@ -24,6 +24,9 @@
     <!--Custom CSS-->
     <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
 
+    <!--Payment Gateway Script-->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
     <title>E-Bazaar | {% block title %} {% endblock title %} </title>
   </head>
@@ -100,91 +103,20 @@
        </div>
      </div>
     </nav>
+    
     {% block banner_slider %} {% endblock banner_slider %}
-    {% comment %} {% block livesale %} {% endblock livesale %} {% endcomment %}
+  
     {% block main-content %}{% endblock main-content %}
+
+    {% block payment-gateway %}{% endblock payment-gateway %}
+  
+    {% block footer %}{% endblock footer %}
 
     {% comment %} <!-- Start Footer -->
     <footer class="container-fluid bg-dark text-center p-2 mt-5">
         <small class="text-white">Copyright &copy; 2024-25 || Designed By Biswajit || </small>
         <img src="{% static 'app/images/payment.png' %}" alt="" srcset="" class="img-fluid" height="2px">
     </footer> <!-- End Footer --> {% endcomment %}
-
-
-    <!-- footer section -->
-<section class="footer">
-	<div class="box-container m-5 border-1 px-5">
-		<div class="box">
-			<h3><i class="fa-solid fa-shopping-basket"></i> E-Bazaar</h3>
-			<p>fell free to follow us on our social media handlers all the links are given below</p>
-
-			<div class="share">
-				<a href="https://www.facebook.com/profile.php?id=100053213884410" target="_blank" class="fa-brands fa-square-facebook"></a>
-				<a href="#" class="fa-brands fa-twitter"></a>
-				<a href="https://www.instagram.com/_biswa_jit_dey/?hl=en" target="_blank" class="fa-brands fa-instagram"></a>
-				<a href="https://www.linkedin.com/in/biswajit-dey-634878239/" target="_blank" class="fa-brands fa-linkedin"></a>
-
-			</div>
-		</div>
-
-
-		<div class="box">
-			<h3>contact info</h3>
-			<a href="#" class="links"> <i class="fa-solid fa-phone"></i> +91 9832857859</a>
-			<a href="#" class="links" style="text-transform: none;"> <i class="fa-solid fa-envelope"></i> bdey862002@gmail.com</a>
-			<a href="#" class="links"> <i class="fa-solid fa-location-dot"></i>Jhargram, Raghunathpur - 721507 West-Bengal</a>
-	
-		</div>
-
-
-		<div class="box">
-			<h3>quick links</h3>
-			<a href="/" class="links"> <i class="fa-solid fa-arrow-right"></i> home</a>
-			<a href="{% url "mobile" %}" class="links"> <i class="fa-solid fa-arrow-right"></i> mobiles</a>
-			<a href="{% url "laptop" %}" class="links"> <i class="fa-solid fa-arrow-right"></i> laptops</a>
-			<a href="{% url "topwear" %}" class="links"> <i class="fa-solid fa-arrow-right"></i> top-wears</a>
-			<a href="{% url "bottomwear" %}" class="links"> <i class="fa-solid fa-arrow-right"></i> bottom-wears</a>
-			<a href="{% url "showcart" %}" class="links"> <i class="fa-solid fa-arrow-right"></i> carts</a>
-	
-		</div>
-
-
-		<div class="box">
-			<h3>directions</h3>
-
-			<!-- <form>
-				<input type="email" name="email" placeholder="Your Email" class="email" autocomplete="off">
-				<br>
-				<input type="submit" value="submit" class="btn">
-			</form>
-			
-			<img src="image/payment.png" class="payments"> -->
-
-			{% comment %} <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14736.293744982475!2d88.42368324641063!3d22.576356565464508!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a0275a71d44585d%3A0x5fa34de3851efde2!2sTechnopolis!5e0!3m2!1sen!2sin!4v1725777647516!5m2!1sen!2sin"  style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="map"></iframe> {% endcomment %}
-
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56847.58609642627!2d86.95928528966567!3d22.45118482180713!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a1d7bcae512b101%3A0xd6cf20a23cf93fab!2sJhargram%2C%20West%20Bengal!5e1!3m2!1sen!2sin!4v1735506675156!5m2!1sen!2sin"style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="map"></iframe>
-
-		</div>
-	</div>
-
-
-<div class="credit text-center pb-4">
-	<div class="d-inline">
-    created by <span>Biswajit Dey</span> | <i class="fa-regular fa-copyright"> <strong>2024 E-Bazaar</i></strong>
-  </div>
-  <div class="d-inline">
-    <img src="{% static "app/images/payment-footer.png" %}" class="payments">
-  </div>
-</div>
-
-
-</section>
-<!-- footer section -->
-
-
-
-
-
 
 
 

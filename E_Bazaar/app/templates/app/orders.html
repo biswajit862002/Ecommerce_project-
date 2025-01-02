@@ -18,28 +18,20 @@
         <img src="{{op.product.product_image.url}}" alt="" srcset="" class="img-fluid" height="150" width="150">
     </div>
     <div class="col-sm-7">
-        <p>Product: {{op.product.title}}</p>
+        <p>Product id: {{op.product.id}}</p>
+        <p>Product Title: {{op.product.title}}</p>
         <p>Quantity: {{op.quantity}}</p>
         <p>Price: {{op.total_cost}}</p>
-        <p>product id: {{op.product.id}}</p>
+        
+        
 
+        {% comment %} this code work for multiple order cancle {% endcomment %}
 
-
-
-        <!-- Button trigger modal -->
-        {% comment %} <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" name="order-id" value="{{op.product}}">
-            Cancel
-            name="cancelbtn" id="cancel{{forloop.counter}}" value="{{op.product.id}}"
-
-            <input type="hidden" id="hidden-order-id"> <!-- Hidden field to store order ID -->
-
-            name="cancelbtn" value="{{op.product.id}}"
-             
-        </button> {% endcomment %}
-
-        <button type="button" class="btn btn-danger order-cancel-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-order-id="{{op.product.id}}">
-            Cancel
-        </button>
+        {% if op.status == 'Accepted' or op.status == 'Packed' or op.status == 'Pending' %}
+            <button type="button" class="btn btn-danger order-cancel-btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-order-id="{{op.id}}">
+                    Cancel
+            </button>
+        {% endif %}
         
         
         
@@ -57,13 +49,14 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" data-order-id="{{op.product.id}}">Confirm</button>
+                        <button type="button" class="btn btn-primary confirm-cancel-btn">
+                            Confirm
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div> 
-
+    </div>  
 
 
 
@@ -111,3 +104,8 @@
  </div><!-- row closed -->
 </div><!-- container closed -->
 {% endblock main-content %}
+
+
+{% block footer %}
+{% include "app/footer.html" %}
+{% endblock footer %}

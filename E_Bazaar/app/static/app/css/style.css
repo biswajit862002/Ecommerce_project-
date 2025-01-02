@@ -55,6 +55,40 @@
 	/* text-transform: capitalize; */
 }
 
+.btn-primary
+{
+	background-color: var(--blue);
+	border: none;
+
+}
+
+.custom-plus-color
+{
+	color: var(--blue);
+}
+
+.cart-remove-item
+{
+	background-color: var(--red);
+	color: #fff;
+}
+
+.cart-remove-item:hover
+{
+	color: #fff;
+}
+
+
+#continue-btn-container
+{
+	display: none;
+}
+
+
+
+
+
+
 
 
 /* this the color of navbar */

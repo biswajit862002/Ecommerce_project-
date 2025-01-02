@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Customer, Product, Cart, OrderPlaced
+from .models import Customer, Product, Cart, OrderPlaced, Payment
 from .forms import CustomerRegistrationForm, CustomerProfileForm
 from django.contrib import messages
 from django.db.models import Q
@@ -8,6 +8,8 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+import razorpay
+from django.conf import settings
 
 # def home(request):
 #  return render(request, 'app/home.html')
@@ -49,7 +51,7 @@ class ProductDetailView(View):
 def add_to_cart(request):
  user = request.user
  product_id = request.GET.get('prod_id')
- print("product : ",product_id)
+#  print("product : ",product_id)
  product = Product.objects.get(id=product_id)
  Cart(user=user, product=product).save()
  return redirect('/cart')
@@ -178,6 +180,30 @@ def address(request):
  return render(request, 'app/address.html', {'address':address, 'active':'btn-primary', 'totalitem':total_item})
 
 
+class updateAddress(View):
+  def get(self, request, pk):
+    add = Customer.objects.get(pk=pk)
+    form = CustomerProfileForm(instance=add)
+    return render(request, 'app/updateaddress.html', {'form':form})
+  def post(self, request, pk):
+    form = CustomerProfileForm(request.POST)
+    if form.is_valid():
+      add = Customer.objects.get(pk=pk) 
+      add.name = form.cleaned_data['name']
+      add.locality = form.cleaned_data['locality']
+      add.city = form.cleaned_data['city']
+      add.mobile = form.cleaned_data['mobile']
+      add.zipcode = form.cleaned_data['zipcode']
+      add.state = form.cleaned_data['state']
+
+      add.save()
+      messages.success(request,"Congratulations! Profile Updated Successfully")
+    else:
+      messages.warning(request,"Invalid Input Data")
+
+    return redirect('address')
+
+
 @login_required
 def orders(request):
  total_item = 0
@@ -204,21 +230,27 @@ def orders(request):
 @csrf_exempt
 def cancel_order(request):
     if request.method == 'POST':
-        print("--------POST Data: ", request.POST)  # Debugging
-        order_id = request.POST.get('order_id')
-        print("-----------order_id: ",order_id)
+        # print("--------POST Data: ", request.POST)  # Debugging
+        order_id = request.POST.get('order_id')  # Get the product ID
+        user_id = request.user.id  # Get the logged-in user's ID
+        # print("1-----------order_id: ",order_id)
+        # print("1-----------user_id: ",user_id)
         if not order_id:
             return JsonResponse({'error': 'Order ID is missing'}, status=400)
         
         try:
-            order = OrderPlaced.objects.get(product=order_id)
-            print("-----------order: ",order)
-            print(f"id: {order.id}")  # See the current value
-            print(f"user: {order.user}")  # See the current value
-            print(f"product: {order.product}")  # See the current value
-            print(f"Before status: {order.status}")  # See the current value
+            # order = OrderPlaced.objects.get(product=order_id, user_id=user_id)
+
+            # Fetch the specific order using the unique order ID
+            order = OrderPlaced.objects.get(id=order_id)
+
+            # print("-----------order: ",order)
+            # print(f"id: {order.id}")  # See the current value
+            # print(f"user: {order.user}")  # See the current value
+            # print(f"product: {order.product}")  # See the current value
+            # print(f"Before status: {order.status}")  # See the current value
             order.status = 'Cancel'
-            print(f"After status: {order.status}")  # Confirm the new value
+            # print(f"After status: {order.status}")  # Confirm the new value
             order.save()
             return JsonResponse({'message': 'Order cancelled successfully!'})
         except OrderPlaced.DoesNotExist:
@@ -228,7 +260,7 @@ def cancel_order(request):
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-@login_required
+
 def mobile(request, data=None):
  total_item = 0
  if request.user.is_authenticated:
@@ -247,7 +279,7 @@ def mobile(request, data=None):
  context = {'mobiles':mobiles, 'totalitem':total_item}
  return render(request, 'app/mobile.html', context)
 
-@login_required
+
 def laptop(request, data=None):
  total_item = 0
  if request.user.is_authenticated:
@@ -269,7 +301,7 @@ def laptop(request, data=None):
  return render(request, 'app/laptop.html', context)
 
 
-@login_required
+
 def topwear(request, data=None):
  total_item = 0
  if request.user.is_authenticated:
@@ -287,7 +319,6 @@ def topwear(request, data=None):
  return render(request, 'app/topwear.html', context)
 
 
-@login_required
 def bottomwear(request, data=None):
  total_item = 0
  if request.user.is_authenticated:
@@ -337,6 +368,7 @@ def checkout(request):
   total_item = len(Cart.objects.filter(user=request.user))
  user = request.user
  add = Customer.objects.filter(user=user)
+#  print("-----address : ",add)
  cart_items = Cart.objects.filter(user=user)
  amount = 0.0
  shipping_amount = 40.0
@@ -348,22 +380,72 @@ def checkout(request):
     amount = amount + temp_amount
   if amount < 500:
    totalamount = amount + shipping_amount
+   razoramount = int(totalamount * 100)
   else:
    totalamount = amount
- return render(request, 'app/checkout.html', {'add':add, 'totalamount':totalamount, 'cart_items':cart_items, 'totalitem':total_item})
+   razoramount = int(totalamount * 100)
+  
+  client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+  data = {'amount': razoramount, 'currency':'INR', 'receipt': 'order_rcptid_12'}
+  payment_response = client.order.create(data=data)
+  print(payment_response)
 
+  order_id = payment_response['id']
+  order_status = payment_response['status']
+  if order_status == 'created':
+    payment = Payment(
+      user = user,
+      amount = totalamount,
+      razorpay_order_id = order_id,
+      razorpay_payment_status = order_status
+    )
+    payment.save()
+
+ return render(request, 'app/checkout.html', {'add':add, 'totalamount':totalamount, 'cart_items':cart_items, 'totalitem':total_item, 'razoramount':razoramount, 'order_id':order_id})
 
 @login_required
-def paymentdone(request):
- user = request.user
- custid = request.GET.get('custid')
-#  print("cust_id: ",custid)
- customer = Customer.objects.get(id=custid)
- cart = Cart.objects.filter(user=user)
- for item in cart:
-  OrderPlaced(user=user, customer=customer, product=item.product, quantity=item.quantity).save()
-  item.delete()
- return redirect('orders')
+def payment_done(request):
+  order_id = request.GET.get('order_id')
+  payment_id = request.GET.get('payment_id')
+  cust_id = request.GET.get('cust_id')
+
+  print("-----------------")
+  print("order id :", order_id)
+  print("payment id :", payment_id)
+  print("cust id :", cust_id)
+  print("-----------------")
+
+  user = request.user
+  customer = Customer.objects.get(id=cust_id)
+  print("customer :", customer)
+
+  # to update payment status and payment id
+  payment = Payment.objects.get(razorpay_order_id=order_id)
+  print("payment :", payment)
+
+  payment.paid = True
+  payment.razorpay_payment_id = payment_id
+  payment.save()
+  # to save other details
+  cart = Cart.objects.filter(user=user)
+  print("-------cart: ", cart)
+  for c in cart:
+    OrderPlaced(user=user, customer=customer, product=c.product, quantity=c.quantity, payment=payment).save()
+    c.delete()
+  return redirect('orders')
+
+
+# @login_required
+# def paymentdone(request):
+#  user = request.user
+#  custid = request.GET.get('custid')
+# #  print("cust_id: ",custid)
+#  customer = Customer.objects.get(id=custid)
+#  cart = Cart.objects.filter(user=user)
+#  for item in cart:
+#   OrderPlaced(user=user, customer=customer, product=item.product, quantity=item.quantity).save()
+#   item.delete()
+#  return redirect('orders')
 
 
 @method_decorator(login_required, name='dispatch')

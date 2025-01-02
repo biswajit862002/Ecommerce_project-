@@ -60,9 +60,8 @@
 {% if category == 'BW' %}
 <!-- 1st Product Slider -->
 <div class="m-3">
-    <div class="my-5">
-      <h2 class="heading text-center"><span>Similar Bottom Wears Product</span></h2>
-    </div>
+
+  {% include "app/heading.html" with data="Similar Bottom Wears Product" %}
    
    <!-- Slider 1 -->
     <div class="owl-carousel" id="slider1">
@@ -93,11 +92,9 @@
   {% elif category == 'TW' %}
   <!-- 2nd Product Slider -->
   <div class="m-3">
-    <div class="my-5">
-      <h2 class="heading text-center"><span>Similar Top Wears Product</span></h2>
-    </div>
-  
-   
+
+    {% include "app/heading.html" with data="Similar Top Wears Product" %}
+
    <!-- Slider 1 -->
     <div class="owl-carousel" id="slider2">
       {% for tw in allproduct %}
@@ -128,11 +125,9 @@
   {% elif category == 'M' %}
   <!-- 3rd Product Slider -->
   <div class="m-3">
-    <div class="my-5">
-      <h2 class="heading text-center "><span>Similar Smart Mobiles Product</span></h2>
-    </div>
-  
-   
+
+    {% include "app/heading.html" with data="Similar Mobiles Product" %}
+
    <!-- Slider 1 -->
     <div class="owl-carousel" id="slider3">
       {% for m in allproduct %}
@@ -162,10 +157,7 @@
   {% elif category == 'L' %}
   <!-- 3rd Product Slider -->
   <div class="m-3">
-    <div class="my-5">
-      <h2 class="heading text-center "><span>Similar Laptops Product</span></h2>
-    </div>
-  
+    {% include "app/heading.html" with data="Similar Laptops Product" %}
    
    <!-- Slider 1 -->
     <div class="owl-carousel" id="slider4">
@@ -196,3 +188,8 @@
 
 
 {% endblock main-content %}
+
+
+{% block footer %}
+{% include "app/footer.html" %}
+{% endblock footer %}

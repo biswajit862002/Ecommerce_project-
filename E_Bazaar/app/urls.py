@@ -14,17 +14,21 @@ urlpatterns = [
     path('pluscart/', views.plus_cart, name='pluscart'),
     path('minuscart/', views.minus_cart, name='minuscart'),
     path('removecart/', views.remove_cart, name='removecart'),
+    path('buy-now/', views.buy_now, name='buy-now'),
+
 
     path('checkout/', views.checkout, name='checkout'),
-    path('paymentdone/', views.paymentdone, name='paymentdone'),
-
-
-    path('buy-now/', views.buy_now, name='buy-now'),
+    path('paymentdone/', views.payment_done, name='paymentdone'),
     path('orders/', views.orders, name='orders'),
     path('cancel_order/', views.cancel_order, name='cancel_order'),
 
+
+
+
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('address/', views.address, name='address'),
+    path('address/<int:pk>', views.updateAddress.as_view(), name='update_address'),
+
     
     path('mobile/', views.mobile, name='mobile'),
     path('mobile/<slug:data>', views.mobile, name='mobiledata'),

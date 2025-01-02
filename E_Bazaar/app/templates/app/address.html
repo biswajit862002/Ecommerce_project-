@@ -5,17 +5,17 @@
 <div class="container my-5">
  <div class="row">
  <h3>Welcome {{request.user|capfirst}}</h3>
-  <div class="col-sm-2 border-end">
+  <div class="col-sm-3 border-end">
    <ul class="list-unstyled">
     <li class="d-grid"><a href="{% url 'profile' %}" class="btn">Profile</a></li>
     <li class="d-grid"><a href="{% url 'address' %}" class="btn {{active}}">Address</a></li>
    </ul>
   </div>
-  <div class="col-sm-9 offset-sm-1">
+  <div class="col-sm-8 offset-sm-1">
    <div class="row">
     {% for add in address %}
         <div class="col-sm-6">
-            <div class="card mb-3">
+            <div class="card m-3 p-2">
                 <div class="card-body">
                     <h3>Address {{forloop.counter}}</h3>
                     <span>Name: {{add.name}}, </span>
@@ -24,6 +24,11 @@
                     <span>State: {{add.state}}, </span>
                     <span>Mobile: {{add.mobile}}, </span>
                     <span>Pin-code: {{add.zipcode}}</span>
+                    <br><br>
+                    <p class="text-center">
+                        <a href="{% url "update_address" pk=add.id %}" class="btn btn-success">Update</a>
+                    </p> 
+
                 </div>
             </div>
         </div>
