@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib import admin
 from app import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -8,26 +9,30 @@ from .forms import LoginForm, MyPasswordChangeForm, MyPasswordResetForm, MySetPa
 urlpatterns = [
     path('', views.ProductView.as_view(), name='home'),
     path('product-detail/<int:pk>', views.ProductDetailView.as_view(), name='product-detail'),
+    path('profile/', views.ProfileView.as_view(), name='profile'),
+    path('address/', views.address, name='address'),
+    path('address/<int:pk>', views.updateAddress.as_view(), name='update_address'),
+
+
+    path('search/', views.search, name='search'),
+
     
     path('add-to-cart/', views.add_to_cart, name='add-to-cart'),
     path('cart/', views.show_cart, name='showcart'),
-    path('pluscart/', views.plus_cart, name='pluscart'),
-    path('minuscart/', views.minus_cart, name='minuscart'),
-    path('removecart/', views.remove_cart, name='removecart'),
     path('buy-now/', views.buy_now, name='buy-now'),
-
-
     path('checkout/', views.checkout, name='checkout'),
     path('paymentdone/', views.payment_done, name='paymentdone'),
     path('orders/', views.orders, name='orders'),
     path('cancel_order/', views.cancel_order, name='cancel_order'),
 
 
+    path('pluscart/', views.plus_cart, name='pluscart'),
+    path('minuscart/', views.minus_cart, name='minuscart'),
+    path('removecart/', views.remove_cart, name='removecart'),
 
-
-    path('profile/', views.ProfileView.as_view(), name='profile'),
-    path('address/', views.address, name='address'),
-    path('address/<int:pk>', views.updateAddress.as_view(), name='update_address'),
+    path('showwishlist/', views.show_wishlist, name='showwishlist'),
+    path('pluswishlist/', views.plus_wishlist, name='pluswishlist'),
+    path('minuswishlist/', views.minus_wishlist, name='minuswishlist'),
 
     
     path('mobile/', views.mobile, name='mobile'),
@@ -42,6 +47,9 @@ urlpatterns = [
     path('bottomwear/', views.bottomwear, name='bottomwear'),
     path('bottomwear/<slug:data>', views.bottomwear, name='bottomweardata'),
 
+
+    # Login Authentication
+
     path('accounts/login/', auth_views.LoginView.as_view(template_name='app/login.html', authentication_form=LoginForm), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
 
@@ -53,8 +61,11 @@ urlpatterns = [
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='app/password_reset_confirm.html', form_class=MySetPasswordForm), name='password_reset_confirm'), 
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='app/password_reset_complete.html'), name='password_reset_complete'), 
 
-
-
-
     path('registration/', views.CustomerRegistrationView.as_view(), name='customerregistration'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+admin.site.site_header = "E-Bazaar administration"
+admin.site.site_title = "E-Bazaar"
+admin.site.site_index_title = "Welcome to E-Bazaar Shop"
+

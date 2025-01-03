@@ -1,0 +1,65 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Search Result{% endblock title %}
+{% block main-content %}
+<div class="container my-5">
+ <div class="row">
+ <h3>Welcome {{request.user|capfirst}}</h3>
+  <div class="col-sm-2 border-end">
+   <ul class="list-unstyled">
+    <li class="d-grid"><a href="#" class="btn btn-primary">Search Items</a></li>
+   </ul>
+  </div><!-- 1st col closed -->
+
+  <div class="col-sm-8 offset-sm-1">
+   {% for prod in product %}
+   <div class="row shadow-sm mb-3 p-4 pb-3">
+    <div class="col-sm-2 text-center m-2 p-2">
+        <a href="{% url "product-detail" prod.id %}">
+            <img src="{{prod.product_image.url}}" alt="" srcset="" class="img-fluid" height="150" width="150">
+        </a>
+    </div>
+    <div class="col-sm-7 m-3 m-2 p-2">
+        <p>Product id: {{prod.id}}</p>
+        <p>Product Title: {{prod.title}}</p>
+        <p class="fw-bold text-danger">Rs. {{prod.discounted_price}} <small class="fw-light text-decoration-line-through">{{prod.selling_price}}</small> </p>    
+    </div>  
+   </div>
+   {% endfor %}
+  </div><!-- 2nd col closed -->
+ </div><!-- row closed -->
+</div><!-- container closed -->
+{% endblock main-content %}
+
+
+{% block footer %}
+{% include "app/footer.html" %}
+{% endblock footer %}
+
+
+{% comment %} {% block main-content %}
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="row">
+                {% for prod in product %}
+                    <div class="col-sm-4 text-center mb-4 hover-shadow">
+                        <a href="{% url "product-detail" prod.id %}" class="btn">
+                            <div>
+                                <img src="{{prod.product_image.url}}" width="200px" height="200px" alt="">
+                                <div class="fw-bold">{{prod.title}}</div>
+                                <div class="fw-bold text-danger">
+                                    Rs.{{prod.discounted_price}}/-
+                                    <small class="fw-light text-decoration-line-through">{{prod.selling_price}}</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main-content %} {% endcomment %}

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Customer, Product, Cart, OrderPlaced, Payment
+from .models import Customer, Product, Cart, OrderPlaced, Payment, Wishlist
 from .forms import CustomerRegistrationForm, CustomerProfileForm
 from django.contrib import messages
 from django.db.models import Q
@@ -17,6 +17,7 @@ from django.conf import settings
 class ProductView(View):
  def get(self, request): 
   total_item = 0
+  wish_item = 0
   topwears = Product.objects.filter(category = 'TW')
   bottomwears = Product.objects.filter(category = 'BW')
   mobiles = Product.objects.filter(category = 'M')
@@ -24,8 +25,9 @@ class ProductView(View):
 
   if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
 
-  context = {'topwears':topwears, 'bottomwears':bottomwears, 'mobiles':mobiles, 'laptops':laptops, 'totalitem':total_item}
+  context = {'topwears':topwears, 'bottomwears':bottomwears, 'mobiles':mobiles, 'laptops':laptops, 'totalitem':total_item, 'wishitem':wish_item}
 
   return render(request, 'app/home.html', context)
 
@@ -35,15 +37,18 @@ class ProductView(View):
 class ProductDetailView(View):
  def get(self, request, pk):
   total_item = 0
+  wish_item = 0
   product = Product.objects.get(pk=pk)
+  wishlist = Wishlist.objects.filter(Q(product=product) & Q(user=request.user))
   all_product = Product.objects.filter(category=product.category)
   # print("all Product: ",all_product)
   # print("category: ",product.category)
   item_already_in_cart = False
   if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
     item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
-  context = {'product':product, 'item_already_in_cart':item_already_in_cart, 'totalitem':total_item, 'category':product.category, 'allproduct':all_product}
+  context = {'product':product, 'item_already_in_cart':item_already_in_cart, 'totalitem':total_item, 'category':product.category, 'allproduct':all_product, 'wishlist':wishlist, 'wishitem':wish_item}
   return render(request, 'app/productdetail.html', context)
 
 
@@ -60,8 +65,11 @@ def add_to_cart(request):
 @login_required
 def show_cart(request):
  total_item = 0
+ wish_item = 0
  if request.user.is_authenticated:
   total_item = len(Cart.objects.filter(user=request.user))
+  wish_item = len(Wishlist.objects.filter(user=request.user))
+
   user = request.user
   cart = Cart.objects.filter(user=user)
   # print(cart)
@@ -77,7 +85,7 @@ def show_cart(request):
     temp_amount = (p.quantity * p.product.discounted_price)
     amount = amount + temp_amount
     total_amount = amount + shipping_amount
-   return render(request, 'app/addtocart.html', {'carts':cart, 'amount':amount, 'totalamount':total_amount, 'totalitem':total_item})
+   return render(request, 'app/addtocart.html', {'carts':cart, 'amount':amount, 'totalamount':total_amount, 'totalitem':total_item, 'wishitem':wish_item})
   else:
    return render(request, 'app/emptycart.html', {'totalitem':total_item})
   
@@ -124,6 +132,7 @@ def minus_cart(request):
   return JsonResponse(data)
  
 
+
 def remove_cart(request):
  if request.method == 'GET':
   prod_id = request.GET['prod_id']
@@ -142,6 +151,57 @@ def remove_cart(request):
     'totalamount': amount + shipping_amount,
     }
   return JsonResponse(data)
+ 
+
+
+@login_required
+def show_wishlist(request):
+  user = request.user
+  total_item = 0
+  wish_item = 0
+  if request.user.is_authenticated:
+    total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+    # print("-------wishitem: ",wish_item)
+
+  product = Wishlist.objects.filter(user=user)
+  # print("-------product: ",product)
+  # print("-------wishitem: ",wish_item)
+
+  if wish_item > 0:
+    return render(request, 'app/wishlist.html', {'product':product, 'totalitem':total_item, 'wishitem':wish_item})
+  else:
+    return render(request, 'app/emptywishlist.html', {'product':product, 'totalitem':total_item, 'wishitem':wish_item})
+
+
+ 
+
+@login_required
+def plus_wishlist(request):
+  if request.method == 'GET':
+    prod_id = request.GET['prod_id']
+    product = Product.objects.get(id=prod_id)
+    user = request.user
+    Wishlist(user=user, product=product).save()
+    data = {
+      'message':'Wishlist Added Successfully',
+    }
+    return JsonResponse(data)
+  
+
+@login_required
+def minus_wishlist(request):
+  if request.method == 'GET':
+    prod_id = request.GET['prod_id']
+    print("prod Id: ",prod_id)
+    product = Product.objects.get(id=prod_id)
+    user = request.user
+    Wishlist.objects.filter(user=user, product=product).delete()
+    data = {
+      'message':'Wishlist Removed Successfully',
+    }
+    return JsonResponse(data)
+
 
 @login_required
 def buy_now(request):
@@ -174,12 +234,15 @@ def buy_now(request):
 @login_required
 def address(request):
  total_item = 0
+ wish_item = 0
  address = Customer.objects.filter(user=request.user)
  if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
- return render(request, 'app/address.html', {'address':address, 'active':'btn-primary', 'totalitem':total_item})
+    wish_item = len(Wishlist.objects.filter(user=request.user))
 
+ return render(request, 'app/address.html', {'address':address, 'active':'btn-primary', 'totalitem':total_item, 'wishitem':wish_item})
 
+@method_decorator(login_required, name='dispatch')
 class updateAddress(View):
   def get(self, request, pk):
     add = Customer.objects.get(pk=pk)
@@ -207,10 +270,13 @@ class updateAddress(View):
 @login_required
 def orders(request):
  total_item = 0
+ wish_item = 0
  op = OrderPlaced.objects.filter(user=request.user)
  if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
- return render(request, 'app/orders.html', {'order_placed':op, 'totalitem':total_item})
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
+ return render(request, 'app/orders.html', {'order_placed':op, 'totalitem':total_item, 'wishitem':wish_item})
 
 
 # @csrf_exempt
@@ -263,8 +329,11 @@ def cancel_order(request):
 
 def mobile(request, data=None):
  total_item = 0
+ wish_item = 0
  if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
  if data == None:
   mobiles = Product.objects.filter(category='M')
  elif data == 'Redmi' or data == 'Samsung' or data == 'Oppo' or data == 'Vivo' or data == 'Apple':
@@ -276,14 +345,17 @@ def mobile(request, data=None):
  elif data == 'above20k':
   mobiles = Product.objects.filter(category='M').filter(discounted_price__gt=20000)
 
- context = {'mobiles':mobiles, 'totalitem':total_item}
+ context = {'mobiles':mobiles, 'totalitem':total_item, 'wishitem':wish_item}
  return render(request, 'app/mobile.html', context)
 
 
 def laptop(request, data=None):
  total_item = 0
+ wish_item = 0
  if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
  if data == None:
   laptops = Product.objects.filter(category='L')
  elif data == 'Hp' or data == 'Dell' or data == 'Lenovo' or data == 'Msi' or data == 'Samsung':
@@ -297,15 +369,18 @@ def laptop(request, data=None):
  elif data == 'above100k':
   laptops = Product.objects.filter(category='L').filter(discounted_price__gt=100000)
 
- context = {'laptops':laptops, 'totalitem':total_item}
+ context = {'laptops':laptops, 'totalitem':total_item, 'wishitem':wish_item}
  return render(request, 'app/laptop.html', context)
 
 
 
 def topwear(request, data=None):
  total_item = 0
+ wish_item = 0
  if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
  if data == None:
   topwears = Product.objects.filter(category='TW')
  elif data == 'Park' or data == 'Polo':
@@ -315,14 +390,17 @@ def topwear(request, data=None):
  elif data == 'above500':
   topwears = Product.objects.filter(category='TW').filter(discounted_price__gt=500)
 
- context = {'topwears':topwears, 'totalitem':total_item}
+ context = {'topwears':topwears, 'totalitem':total_item, 'wishitem':wish_item}
  return render(request, 'app/topwear.html', context)
 
 
 def bottomwear(request, data=None):
  total_item = 0
+ wish_item = 0
  if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
  if data == None:
   bottomwears = Product.objects.filter(category='BW')
  elif data == 'Lee' or data == 'Spykar':
@@ -334,7 +412,7 @@ def bottomwear(request, data=None):
  elif data == 'above1000':
   bottomwears = Product.objects.filter(category='BW').filter(discounted_price__gt=1000)
 
- context = {'bottomwears':bottomwears, 'totalitem':total_item}
+ context = {'bottomwears':bottomwears, 'totalitem':total_item, 'wishitem':wish_item}
  return render(request, 'app/bottomwear.html', context)
 
 
@@ -364,8 +442,11 @@ class CustomerRegistrationView(View):
 @login_required
 def checkout(request):
  total_item = 0
+ wish_item = 0
  if request.user.is_authenticated:
   total_item = len(Cart.objects.filter(user=request.user))
+  wish_item = len(Wishlist.objects.filter(user=request.user))
+
  user = request.user
  add = Customer.objects.filter(user=user)
 #  print("-----address : ",add)
@@ -401,7 +482,7 @@ def checkout(request):
     )
     payment.save()
 
- return render(request, 'app/checkout.html', {'add':add, 'totalamount':totalamount, 'cart_items':cart_items, 'totalitem':total_item, 'razoramount':razoramount, 'order_id':order_id})
+ return render(request, 'app/checkout.html', {'add':add, 'totalamount':totalamount, 'cart_items':cart_items, 'totalitem':total_item, 'wishitem':wish_item,'razoramount':razoramount, 'order_id':order_id})
 
 @login_required
 def payment_done(request):
@@ -452,15 +533,21 @@ def payment_done(request):
 class ProfileView(View):
  def get(self, request):
   total_item = 0
+  wish_item = 0
   if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
   form = CustomerProfileForm()
-  return render(request, 'app/profile.html', {'form':form, 'active':'btn-primary', 'totalitem':total_item})
+  return render(request, 'app/profile.html', {'form':form, 'active':'btn-primary', 'totalitem':total_item, 'wishitem':wish_item})
  
  def post(self, request):
   total_item = 0
+  wish_item = 0
   if request.user.is_authenticated:
     total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
   form = CustomerProfileForm(request.POST)
   if form.is_valid():
    user = request.user
@@ -475,5 +562,16 @@ class ProfileView(View):
    profile.save()
 
    messages.success(request, 'Congratulations!! Profile Updated Successfully')
-  return render(request, 'app/profile.html', {'form':form, 'active':'btn-primary', 'totalitem':total_item})
+  return render(request, 'app/profile.html', {'form':form, 'active':'btn-primary', 'totalitem':total_item, 'wishitem':wish_item})
 
+
+def search(request):
+  query = request.GET['search']
+  total_item = 0
+  wish_item = 0
+  if request.user.is_authenticated:
+    total_item = len(Cart.objects.filter(user=request.user))
+    wish_item = len(Wishlist.objects.filter(user=request.user))
+
+  product = Product.objects.filter(Q(title__icontains=query))
+  return render(request, 'app/search.html', locals())

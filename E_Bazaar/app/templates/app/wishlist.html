@@ -1,0 +1,37 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Orders{% endblock title %}
+{% block main-content %}
+<div class="container my-5">
+ <div class="row">
+ <h3>Welcome {{request.user|capfirst}}</h3>
+  <div class="col-sm-2 border-end">
+   <ul class="list-unstyled">
+    <li class="d-grid"><a href="{% url 'showwishlist' %}" class="btn btn-primary">Wishlist</a></li>
+   </ul>
+  </div><!-- 1st col closed -->
+
+  <div class="col-sm-9 offset-sm-1">
+   {% for prod in product %}
+   <div class="row shadow-sm mb-3 p-4 pb-3">
+    <div class="col-sm-2">
+        <a href="{% url "product-detail" prod.product.id %}">
+            <img src="{{prod.product.product_image.url}}" alt="" srcset="" class="img-fluid" height="150" width="150">
+        </a>
+    </div>
+    <div class="col-sm-7 m-4">
+        <p>Product id: {{prod.product.id}}</p>
+        <p>Product Title: {{prod.product.title}}</p>
+        <p class="fw-bold text-danger">Rs. {{prod.product.discounted_price}} <small class="fw-light text-decoration-line-through">{{prod.product.selling_price}}</small> </p>    
+    </div>  
+   </div>
+   {% endfor %}
+  </div><!-- 2nd col closed -->
+ </div><!-- row closed -->
+</div><!-- container closed -->
+{% endblock main-content %}
+
+
+{% block footer %}
+{% include "app/footer.html" %}
+{% endblock footer %}

@@ -94,6 +94,41 @@ $('.remove-cart').click(function () {
 
 
 
+$('.plus-wishlist').click(function(){
+    let id = $(this).attr("pid").toString();
+    console.log("plus : ",id)
+
+    $.ajax({
+        type:"GET",
+        url:"/pluswishlist",
+        data:{
+            prod_id:id
+        },
+        success:function(data){
+            window.location.href = `http://localhost:8000/product-detail/${id}`
+        }
+    })
+})
+
+
+$('.minus-wishlist').click(function(){
+    let id = $(this).attr("pid").toString();
+    console.log("minus : ",id)
+
+    $.ajax({
+        type:"GET",
+        url:"/minuswishlist",
+        data:{
+            prod_id:id
+        },
+        success:function(data){
+            window.location.href = `http://localhost:8000/product-detail/${id}`
+        }
+    })
+})
+
+
+
 
 // this code is work only 1 order cancle 
 // $('.btn-primary').click(function () {
