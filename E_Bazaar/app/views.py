@@ -34,12 +34,15 @@ class ProductView(View):
 # def product_detail(request):
 #  return render(request, 'app/productdetail.html')
 
+@method_decorator(login_required, name='dispatch')
 class ProductDetailView(View):
  def get(self, request, pk):
   total_item = 0
   wish_item = 0
   product = Product.objects.get(pk=pk)
+  # print("--------product: ",product)
   wishlist = Wishlist.objects.filter(Q(product=product) & Q(user=request.user))
+  # print("--------wishlist: ",wishlist)
   all_product = Product.objects.filter(category=product.category)
   # print("all Product: ",all_product)
   # print("category: ",product.category)
@@ -48,6 +51,7 @@ class ProductDetailView(View):
     total_item = len(Cart.objects.filter(user=request.user))
     wish_item = len(Wishlist.objects.filter(user=request.user))
     item_already_in_cart = Cart.objects.filter(Q(product=product.id) & Q(user=request.user)).exists()
+
   context = {'product':product, 'item_already_in_cart':item_already_in_cart, 'totalitem':total_item, 'category':product.category, 'allproduct':all_product, 'wishlist':wishlist, 'wishitem':wish_item}
   return render(request, 'app/productdetail.html', context)
 
@@ -574,4 +578,4 @@ def search(request):
     wish_item = len(Wishlist.objects.filter(user=request.user))
 
   product = Product.objects.filter(Q(title__icontains=query))
-  return render(request, 'app/search.html', locals())
+  return render(request, 'app/search.html', {'product':product, 'totalitem':total_item, 'wishitem':wish_item})

@@ -62,7 +62,7 @@ action="/paymentdone"
     <h4>Select Shipping Address</h4>
     <hr>
 
-<form method="post" id="myform" action="/paymentdone">
+      <form method="post" id="myform" action="/paymentdone">
         {% for ad in add %}
             <div class="form-check">
                 <input class="form-check-input address-radio" type="radio" name="custid" id="custadd{{forloop.counter}}" value="{{ad.id}}">
@@ -99,14 +99,11 @@ action="/paymentdone"
                 <a href="{% url "profile" %}" class="btn btn-primary">Go To Profile</a>
             </div>
         {% endif %}
-    </form>
+      </form>
   </div>
-
-
-
-
-
 </div>
+</div>
+
 {% endblock main-content %}
 
 
